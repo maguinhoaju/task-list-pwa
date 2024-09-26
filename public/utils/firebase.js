@@ -16,16 +16,17 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 export const db = getFirestore(app);
 
-// Utility functions to interact with Firestore
+// Funções de interação com o Firebase - Firestore
+//AddTask
 export const addTaskToFirestore = async (task) => {
   try {
     const docRef = await addDoc(collection(db, "tasks"), task);
-    console.log("Document written with ID: ", docRef.id);
+    console.log("Documento gravado com sucesso. ID = ", docRef.id);
   } catch (e) {
-    console.error("Error adding document: ", e);
+    console.error("Erro ao adicionar documento: ", e);
   }
 };
-
+//GetTasks
 export const getTasksFromFirestore = async () => {
   const querySnapshot = await getDocs(collection(db, "tasks"));
   return querySnapshot.docs.map(doc => doc.data());

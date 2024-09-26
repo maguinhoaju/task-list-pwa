@@ -1,8 +1,8 @@
 'use client'
 
 import { createContext, useContext, useState, useEffect } from 'react';
-import { addTask, getTasks } from '../utils/indexedDb';
-import { addTaskToFirestore, getTasksFromFirestore } from '../utils/firebase';
+import { addTask, getTasks } from '../public/utils/indexedDb';
+import { addTaskToFirestore, getTasksFromFirestore } from '../public/utils/firebase';
 
 // Criação do Contexto
 const TaskContext = createContext();
