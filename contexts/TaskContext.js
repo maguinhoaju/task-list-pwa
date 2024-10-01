@@ -49,7 +49,6 @@ export const TaskProvider = ({ children }) => {
                 console.error("Erro ao carregar e mesclar tarefas:", error);
             }
         };
-
         loadTasks();
     }, []);
 
@@ -60,7 +59,6 @@ export const TaskProvider = ({ children }) => {
             } else {
                 await addTask(task); // Adicionar ao IndexedDB
             }
-            
             // Recarregar e mesclar tarefas após adicionar uma nova tarefa
             await loadTasks();
         } catch (error) {

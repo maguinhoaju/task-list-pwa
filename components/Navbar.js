@@ -4,7 +4,7 @@ import { useState } from 'react';
 import Link from 'next/link';
 import { useAuth } from '@/contexts/AuthContext';
 import { useRouter } from 'next/navigation';
-import { logout } from 'public/utils/firebase'; 
+import { logout } from '@/public/utils/firebase'; 
 
 const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
