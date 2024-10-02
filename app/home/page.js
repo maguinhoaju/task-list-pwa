@@ -5,6 +5,8 @@ import { useState, useEffect } from 'react';
 import { format, parseISO, setDate } from 'date-fns';
 import { addTaskToFirestore, getTasksFromFirestore } from '../../public/utils/firebase';
 import { addTask, getTasks } from '../../public/utils/indexedDb';
+import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
+
 
 const requestNotificationPermission = () => {
   if (Notification.permission === 'default') {
@@ -153,87 +155,94 @@ export default function Home() {
 
   return (
     <PrivateRoute>
-      <div className="container mx-auto min-h-screen p-6">
-        <h1 className="text-3xl mb-6">Minhas Tarefas Diárias</h1>
-
+      <div className="flex items-center justify-start min-h-screen bg-gray-100 text-slate-700 flex-col gap-2">
         {isOffline && (
           <div className='bg-red-500 text-white p-4 rounded mb-6'>
             Você está offline, As tarefas serão sincronizadas quando a conexão for restaurada!
           </div>
         )}
 
-        <form onSubmit={handleAddTask} className="mb-6">
-          <input
-            type="text"
-            placeholder="Título"
-            className="border p-2 mr-2"
-            value={title}
-            onChange={(e) => setTitle(e.target.value)}
-            required
-          />
-          <input
-            type="datetime-local"
-            className="border p-2 mr-2"
-            value={dateTime}
-            onChange={(e) => setDateTime(e.target.value)}
-            required
-          />
-          <label className="mr-2">
-            <input
-              type="checkbox"
-              checked={completed}
-              onChange={(e) => setCompleted(e.target.checked)}
-            />{' '}
-            Completo
-          </label>
-          <button className="bg-blue-500 text-white p-2 rounded" type="submit">
-            Adicionar Tarefa
-          </button>
+        <form onSubmit={handleAddTask} className="mb-10 gap-3 top-0 z-10">
+          <Card className="flex grid grid-cols-1 m-5">
+            <CardHeader className="space-y-1">
+              <CardTitle className="pb-0 text-2xl">Nova Tarefa</CardTitle>
+            </CardHeader>
+            <CardContent className="gap-3">
+              <input
+                type="text"
+                placeholder="Título"
+                className="border p-2 mr-2 rounded"
+                value={title}
+                onChange={(e) => setTitle(e.target.value)}
+                required
+              />
+              <input
+                type="datetime-local"
+                className="border p-2 mr-2 rounded"
+                value={dateTime}
+                onChange={(e) => setDateTime(e.target.value)}
+                required
+              />
+              <label className="mr-2">
+                <input
+                  type="checkbox"
+                  checked={completed}
+                  onChange={(e) => setCompleted(e.target.checked)}
+                />{' '}
+                Completo
+              </label>
+              <button className="bg-blue-500 text-white p-2 rounded" type="submit">
+                Adicionar Tarefa
+              </button>
+            </CardContent>
+          </Card>
         </form>
 
-        <h2 className="text-2xl mb-4">Tarefas</h2>
-        {Object.keys(groupedTasks).filter(date => date !== 'passadas').map((date) => (
-          <div key={date} className="mb-6">
-            <h3 className="text-xl font-bold">
-              {date === today ? 'Hoje' : format(parseISO(date), 'dd/MM/yyyy')}
-            </h3>
-            <ul>
-              {groupedTasks[date].map((task) => (
-                <li key={task.id} className={`border p-4 mb-2 flex justify-between items-center ${!task.synced ? 'border-red-500' : ''}`}>
-                  <span>
-                    {task.title} -{' '}
-                    {format(new Date(task.date), 'HH:mm')} - {' '}
-                    {task.completed ? (
-                      <span className="text-green-500">Concluída</span>
-                    ) : (
-                      <span className="text-red-500">Não Concluída</span>
-                    )}
-                  </span>
-                </li>
-              ))}
-            </ul>
-          </div>
-        ))}
-
-        <h2 className="text-2xl mb-4">Tarefas Passadas</h2>
-        <ul>
-          {groupedTasks['passadas']?.map((task) => (
-            <li
-              key={task.id}
-              className={`border p-4 mb-2 flex justify-between items-center ${!task.synced ? 'text-gray-400 bg-gray-100 border-red-500' : 'text-gray-400 bg-gray-100'}`}
-            >
-              <span>
-              {task.title} -{' '}
-              {format(new Date(task.date), 'HH:mm')} em {format(parseISO(task.date), 'dd/MM/yyyy')} - {' '}
-                {task.completed ? (
-                  <span className="text-green-500">Concluída</span>
-                ) : (
-                  <span className="text-red-500">Não Concluída</span>
-                )}
-              </span>
-            </li>
+        <div className="grid grid-cols-2 gap-3">
+          <h2 className="text-2xl mb-4">Tarefas</h2>
+          {Object.keys(groupedTasks).filter(date => date !== 'passadas').map((date) => (
+            <div key={date} className="mb-6">
+              <h3 className="text-xl font-bold">
+                {date === today ? 'Hoje' : format(parseISO(date), 'dd/MM/yyyy')}
+              </h3>
+              <ul>
+                {groupedTasks[date].map((task) => (
+                  <li key={task.id} className={`border p-4 mb-2 flex justify-between items-center ${!task.synced ? 'border-red-500' : ''}`}>
+                    <span>
+                      {task.title} -{' '}
+                      {format(new Date(task.date), 'HH:mm')} - {' '}
+                      {task.completed ? (
+                        <span className="text-green-500">Concluída</span>
+                      ) : (
+                        <span className="text-red-500">Não Concluída</span>
+                      )}
+                    </span>
+                  </li>
+                ))}
+              </ul>
+            </div>
           ))}
-        </ul>
+
+          <h2 className="text-2xl mb-4 grid gap-1">Tarefas Passadas</h2>
+          <ul>
+            {groupedTasks['passadas']?.map((task) => (
+              <li
+                key={task.id}
+                className={`border p-4 mb-2 flex justify-between items-center ${!task.synced ? 'text-gray-400 bg-gray-100 border-red-500' : 'text-gray-400 bg-gray-100'}`}
+              >
+                <span>
+                {task.title} -{' '}
+                {format(new Date(task.date), 'HH:mm')} em {format(parseISO(task.date), 'dd/MM/yyyy')} - {' '}
+                  {task.completed ? (
+                    <span className="text-green-500">Concluída</span>
+                  ) : (
+                    <span className="text-red-500">Não Concluída</span>
+                  )}
+                </span>
+              </li>
+            ))}
+          </ul>
+          </div>
       </div>
     </PrivateRoute>
   );

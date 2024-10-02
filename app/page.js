@@ -43,13 +43,12 @@ export default function Login() {
 
   return (
     <div className="flex items-center justify-center min-h-screen bg-gray-100 text-slate-700">
-      {error && <p className="text-red-500">{error}</p>}
         <form onSubmit={handleLogin} className="mb-6">
           <Card className="w-[350px]">
             <CardHeader className="space-y-1">
               <CardTitle className="pb-8 text-3xl">Login</CardTitle>
               <CardDescription>
-                Enter your email and password to login
+                Informe e-mail e senha para entrar
               </CardDescription>
             </CardHeader>
             <CardContent className="grid gap-4">
@@ -85,6 +84,9 @@ export default function Login() {
                 <Button className="w-full text-xl bg-blue-500 text-white p-2 rounded" type="submit">
                   Login
                 </Button>
+                <div>
+                  {error && <p className="text-red-500">{error}</p>}
+                </div>
                 <div className='p-5 text-sm'>
                   <p>Não tem uma conta? <a href="/register" className="text-blue-500">Registre-se</a></p>
                 </div>
