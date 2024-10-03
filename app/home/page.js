@@ -3,18 +3,13 @@
 import PrivateRoute from "@/components/PrivateRoute";
 import { useState, useEffect } from "react";
 import { format, parseISO, setDate } from "date-fns";
+import  OpenTaskModalButton  from "@/components/openTaskModalButton";
 import {
   addTaskToFirestore,
   getTasksFromFirestore,
 } from "../../public/utils/firebase";
 import { addTask, getTasks } from "../../public/utils/indexedDb";
-import {
-  Card,
-  CardContent,
-  CardFooter,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
+
 
 const requestNotificationPermission = () => {
   if (Notification.permission === "default") {
@@ -189,44 +184,7 @@ export default function Home() {
           </div>
         )}
 
-        <form onSubmit={handleAddTask} className="mb-10 gap-3 top-0 z-10">
-          <Card className="flex grid grid-cols-1 m-5">
-            <CardHeader className="space-y-1">
-              <CardTitle className="pb-0 text-2xl">Nova Tarefa</CardTitle>
-            </CardHeader>
-            <CardContent className="gap-3">
-              <input
-                type="text"
-                placeholder="Título"
-                className="border p-2 mr-2 rounded"
-                value={title}
-                onChange={(e) => setTitle(e.target.value)}
-                required
-              />
-              <input
-                type="datetime-local"
-                className="border p-2 mr-2 rounded"
-                value={dateTime}
-                onChange={(e) => setDateTime(e.target.value)}
-                required
-              />
-              <label className="mr-2">
-                <input
-                  type="checkbox"
-                  checked={completed}
-                  onChange={(e) => setCompleted(e.target.checked)}
-                />{" "}
-                Completo
-              </label>
-              <button
-                className="bg-blue-500 text-white p-2 rounded"
-                type="submit"
-              >
-                Adicionar Tarefa
-              </button>
-            </CardContent>
-          </Card>
-        </form>
+        <OpenTaskModalButton />
 
         <div className="grid grid-cols-3 gap-14">
           <div>
