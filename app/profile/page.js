@@ -15,34 +15,40 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { signUp } from "@/public/utils/firebase";
+import { auth, db, UpdateProfile } from "@/public/utils/firebase";
+import { onAuthStateChanged } from 'firebase/auth';
+import { doc, getDoc } from 'firebase/firestore';
 
 const Profile = () => {
-  const { user } = useAuth();
-  const [userData, setUserData] = useState({
-    email: "informação não consta",
-    name: "informação não consta",
-    uid: "informação não consta",
-  });
-  const [name, setName] = useState("");
+  const [user, setUser] = useState(null);
+  const [name, setName] = useState('');
+  const [email, setEmail] = useState('');
   const [error, setError] = useState('');
   const router = useRouter();
 
   const [photo, setPhoto] = useState("/images/placeholder.jpg");
 
   useEffect(() => {
-    if (!user) {
-      router.push("/");
-    } else {
-      const { displayName, email, uid, photo } = user;
-      setUserData({
-        name: displayName || "informação não consta",
-        email: email || "informação não consta",
-        uid: uid || "informação não consta",
-        photo: photo
+      const unsubscribe = onAuthStateChanged(auth, async (user) => {
+        if (user) {
+          console.log('Profile.UserEffect')
+          setUser(user);
+          const docRef = doc(db, 'users', user.uid);
+          const docSnap = await getDoc(docRef);
+  
+          if (docSnap.exists()) {
+            setName(docSnap.data().name);
+            setPhotoURL(docSnap.data().photoURL);
+            setEmail(docSnap.data().email);
+            console.log('Informações do usuário obtidas com sucesso.')
+          }
+        } else {
+          setUser(null); // Reset user if not authenticated
+          router.push("/");
+        }
       });
-    }
-  }, [user, router]);
+      return () => unsubscribe();
+    }, [router]);
 
   const handlePhotoChange = (e) => {
     const file = e.target.files[0];
@@ -57,7 +63,7 @@ const Profile = () => {
 
   const handleSave = async (event) => {
     try {
-      await signUp(email, password, displayName, photo);
+      await UpdateProfile(user, name, photo);
       router.push('/home'); 
     } 
     catch (error) 
@@ -108,21 +114,16 @@ const Profile = () => {
                   </Label>
                   <Input
                     id="name"
-                    value={userData.name}
+                    value={name}
                     onChange={(e) => setName(e.target.value)}
                     className="text-lg py-2"
                   />
                 </div>
                 <div className="space-y-2">
                   <Label htmlFor="email" className="text-lg">
-                    E-mail
+                    E-mail:
                   </Label>
-                  <Input
-                    id="email"
-                    value={userData.email}
-                    disabled
-                    className="text-lg py-2"
-                  />
+                  <p>{email}</p>
                 </div>
               </div>
             </div>
