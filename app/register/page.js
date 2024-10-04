@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { signUp } from "../../public/utils/firebase";
+import { logEvent } from 'firebase/analytics';
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -35,6 +36,10 @@ const Register = () => {
     try {
       const user = await signUp(email, password, name);
       console.log("Usuário registrado com sucesso:", user);
+      logEvent(analytics, 'sign_up', {
+        page_title: 'register',
+        user_id: user.id,
+      });
       router.push("/home");
     } catch (error) {
       setError("Erro ao registrar o usuário: " + error.message);

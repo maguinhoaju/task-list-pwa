@@ -2,7 +2,8 @@
 import { initializeApp } from "firebase/app";
 import { getAnalytics } from "firebase/analytics";
 import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, signOut, updateProfile } from "firebase/auth";
-import { getFirestore, collection, addDoc, getDocs } from "firebase/firestore";
+import { getFirestore, collection, doc, addDoc, getDocs, setDoc } from "firebase/firestore";
+
 
 const firebaseConfig = {
   apiKey: "AIzaSyC6UmDxecjF0jF_f7yKfChzhH5xh4AbZfQ",
@@ -23,6 +24,8 @@ const firebaseConfig = {
 };
 
 const app = initializeApp(firebaseConfig);
+// Inicializa o Firebase Analytics
+export const analytics = getAnalytics(app);
 export const auth = getAuth(app);
 export const db = getFirestore(app);
 
@@ -79,17 +82,8 @@ export const signUp = async (email, password, displayName, photoURL) => {
 };
 
 export const UpdateProfile = async (user, name, photoURL) => {
-    // const [name, setName] = useState('');
-    // const [photoURL, setPhotoURL] = useState('');
     try {
         const docRef = doc(db, 'users', user.uid);
-        // const docSnap = await getDoc(docRef);
-
-        // if (docSnap.exists()) {
-        //   setName(docSnap.data().name);
-        //   setPhotoURL(docSnap.data().photoURL);
-        // }
-
         await setDoc(docRef, { name, photoURL });
         alert('Perfil atualizado com sucesso!');
         return user;

@@ -8,6 +8,7 @@ import {
   addTaskToFirestore,
   getTasksFromFirestore,
 } from "../../public/utils/firebase";
+import { logEvent } from 'firebase/analytics';
 import { addTask, getTasks } from "../../public/utils/indexedDb";
 
 
@@ -123,6 +124,10 @@ export default function Home() {
       }
       await addTask(newTask);
       loadTasks();
+      logEvent(analytics, 'add_task_event', {
+        page_title: 'home',
+        user_id: user.id,
+      });
     } catch (error) {
       console.error("Erro ao adicionar nova tarefa:", error);
     }

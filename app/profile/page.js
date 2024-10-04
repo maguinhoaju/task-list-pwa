@@ -18,6 +18,7 @@ import {
 import { auth, db, UpdateProfile } from "@/public/utils/firebase";
 import { onAuthStateChanged } from 'firebase/auth';
 import { doc, getDoc } from 'firebase/firestore';
+import { logEvent } from 'firebase/analytics';
 
 const Profile = () => {
   const [user, setUser] = useState(null);
@@ -38,8 +39,12 @@ const Profile = () => {
   
           if (docSnap.exists()) {
             setName(docSnap.data().name);
-            setPhotoURL(docSnap.data().photoURL);
+            setPhoto(docSnap.data().photoURL);
             setEmail(docSnap.data().email);
+            logEvent(analytics, 'update_profile_event', {
+              page_title: 'profile',
+              user_id: user.id,
+            });
             console.log('Informações do usuário obtidas com sucesso.')
           }
         } else {
