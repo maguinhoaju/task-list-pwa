@@ -78,6 +78,27 @@ export const signUp = async (email, password, displayName, photoURL) => {
     }
 };
 
+export const UpdateProfile = async (user, name, photoURL) => {
+    // const [name, setName] = useState('');
+    // const [photoURL, setPhotoURL] = useState('');
+    try {
+        const docRef = doc(db, 'users', user.uid);
+        // const docSnap = await getDoc(docRef);
+
+        // if (docSnap.exists()) {
+        //   setName(docSnap.data().name);
+        //   setPhotoURL(docSnap.data().photoURL);
+        // }
+
+        await setDoc(docRef, { name, photoURL });
+        alert('Perfil atualizado com sucesso!');
+        return user;
+    } catch (error) {
+        console.error("Erro ao criar conta:", error);
+        throw error;
+    }
+};
+
 export const signIn = async (email, password) => {
     try {
         const userCredential = await signInWithEmailAndPassword(auth, email, password);
