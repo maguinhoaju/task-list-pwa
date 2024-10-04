@@ -56,17 +56,18 @@ export const getTasksFromFirestore = async () => {
     }
 };
 
-export const signUp = async (email, password, displayName) => {
+export const signUp = async (email, password, displayName, photoURL) => {
     try {
         const userCredential = await createUserWithEmailAndPassword(auth, email, password);
         const user = userCredential.user;
 
-        await updateProfile(user, { displayName });
+        await updateProfile(user, { displayName, photoURL });
 
         await addDoc(collection(db, 'users'), {
             uid: user.uid,
             email: user.email,
             displayName,
+            photoURL,
             createdAt: new Date(),
         });
 

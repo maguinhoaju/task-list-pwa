@@ -3,7 +3,7 @@
 import PrivateRoute from "@/components/PrivateRoute";
 import { useState, useEffect } from "react";
 import { format, parseISO, setDate } from "date-fns";
-import  OpenTaskModalButton  from "@/components/openTaskModalButton";
+import TaskModal from "@/components/taskModal";
 import {
   addTaskToFirestore,
   getTasksFromFirestore,
@@ -32,9 +32,7 @@ const sendNotification = (title, body) => {
 
 export default function Home() {
   const [tasks, setTasks] = useState([]);
-  const [title, setTitle] = useState("");
-  const [dateTime, setDateTime] = useState("");
-  const [completed, setCompleted] = useState(false);
+  const [isOpen, setIsOpen] = useState(false)
   const [isOffline, setIsOffline] = useState(!navigator.onLine);
   const today = format(new Date(), "yyyy-MM-dd");
 
@@ -109,23 +107,13 @@ export default function Home() {
     };
   }, []);
 
-  const handleAddTask = async (e) => {
-    e.preventDefault();
-
-    const newTask = {
-      id: Date.now(),
-      title,
-      date: new Date(dateTime).toISOString(),
-      completed,
-      synced: navigator.onLine,
-    };
-
+  async function handleAddTask(newTask) {
+    //    e.preventDefault();
     try {
       if (navigator.onLine) {
         const tasksFromFirestore = await getTasksFromFirestore();
         const exists = tasksFromFirestore.some(
-          (task) =>
-            task.title === newTask.title &&
+          (task) => task.title === newTask.title &&
             task.date === newTask.date &&
             task.completed === newTask.completed
         );
@@ -138,17 +126,12 @@ export default function Home() {
     } catch (error) {
       console.error("Erro ao adicionar nova tarefa:", error);
     }
-
-    setTitle("");
-    setDateTime("");
-    setCompleted(false);
-  };
+  }
 
   const groupByDate = (tasks) => {
     const grouped = tasks.reduce((groups, task) => {
       const taskDate = parseISO(task.date);
       const formattedDate = format(taskDate, "yyyy-MM-dd");
-      //      const displayDate = formattedDate >= today ? formattedDate : "passadas";
       const displayDate =
         formattedDate > today
           ? "futuras"
@@ -184,7 +167,16 @@ export default function Home() {
           </div>
         )}
 
-        <OpenTaskModalButton />
+        <button className="bg-blue-500 text-white rounded m-6 p-4" onClick={() => setIsOpen(true)}>Adicionar tarefa</button>
+
+        {isOpen && (
+        <TaskModal
+          open={isOpen}
+          onOpenChange={setIsOpen}
+          onCadastrar={handleAddTask}
+          onFechar={() => setIsOpen(false)}
+        />
+      )}
 
         <div className="grid grid-cols-3 gap-14">
           <div>

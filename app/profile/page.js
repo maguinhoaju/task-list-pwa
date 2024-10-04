@@ -15,6 +15,7 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
+import { signUp } from "@/public/utils/firebase";
 
 const Profile = () => {
   const { user } = useAuth();
@@ -23,19 +24,22 @@ const Profile = () => {
     name: "informação não consta",
     uid: "informação não consta",
   });
+  const [name, setName] = useState("");
+  const [error, setError] = useState('');
   const router = useRouter();
 
-  const [photo, setPhoto] = useState("/placeholder.svg?height=128&width=128");
+  const [photo, setPhoto] = useState("/images/placeholder.jpg");
 
   useEffect(() => {
     if (!user) {
       router.push("/");
     } else {
-      const { displayName, email, uid } = user;
+      const { displayName, email, uid, photo } = user;
       setUserData({
         name: displayName || "informação não consta",
         email: email || "informação não consta",
         uid: uid || "informação não consta",
+        photo: photo
       });
     }
   }, [user, router]);
@@ -51,14 +55,22 @@ const Profile = () => {
     }
   };
 
-  const handleSave = () => {
-    // Aqui você implementaria a lógica para salvar as alterações
-    console.log("Salvando alterações:", { name, photo });
+  const handleSave = async (event) => {
+    try {
+      await signUp(email, password, displayName, photo);
+      router.push('/home'); 
+    } 
+    catch (error) 
+    {
+      console.error("Erro ao atualizar o perfil do usuário:", error);
+      setError('Erro ao atualizar o perfil do usuário.');
+      router.push('/home');
+    }
   };
 
   return (
     <PrivateRoute>
-      <div className="container mx-auto px-4 py-8">
+      <div className="flex items-center justify-start min-h-screen bg-gray-100 text-slate-700 px-4 py-8">
         <Card className="w-full max-w-3xl mx-auto">
           <CardHeader>
             <CardTitle className="text-3xl font-bold text-center mb-10">

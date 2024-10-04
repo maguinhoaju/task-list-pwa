@@ -8,18 +8,11 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import DatePicker from "react-datepicker"
 import "react-datepicker/dist/react-datepicker.css"
-import {
-    addTaskToFirestore,
-    getTasksFromFirestore,
-  } from "@/public/utils/firebase";
-  import { addTask, getTasks } from "@/public/utils/indexedDb";
-  
 
-export default function TaskModal({ open, onOpenChange }) {
-  const [tasks, setTasks] = useState([]);
-  const [title, setTitle] = useState("")
-  const [dateTime, setDateTime] = useState(new Date())
-  const [completed, setCompleted] = useState(false)
+export default function TaskModal({ open, onOpenChange, onCadastrar, onFechar }) {
+  const [title, setTitle] = useState("");
+  const [dateTime, setDateTime] = useState("");
+  const [completed, setCompleted] = useState(false);
 
   const handleSubmit = (e) => {
     e.preventDefault()
@@ -27,13 +20,6 @@ export default function TaskModal({ open, onOpenChange }) {
       alert("Por favor, preencha todos os campos obrigatórios.")
       return
     }
-    // Aqui você pode adicionar a lógica para salvar a tarefa
-    console.log({ title, dateTime, completed })
-    handleAddTask()
-  }
-
-  const handleAddTask = async (e) => {
-//    e.preventDefault();
 
     const newTask = {
       id: Date.now(),
@@ -43,30 +29,13 @@ export default function TaskModal({ open, onOpenChange }) {
       synced: navigator.onLine,
     };
 
-    try {
-      if (navigator.onLine) {
-        const tasksFromFirestore = await getTasksFromFirestore();
-        const exists = tasksFromFirestore.some(
-          (task) =>
-            task.title === newTask.title &&
-            task.date === newTask.date &&
-            task.completed === newTask.completed
-        );
-        if (!exists) {
-          await addTaskToFirestore(newTask);
-        }
-      }
-      await addTask(newTask);
-      loadTasks();
-    } catch (error) {
-      console.error("Erro ao adicionar nova tarefa:", error);
-    }
-
+    onCadastrar(newTask);
     setTitle("");
     setDateTime("");
     setCompleted(false);
     onOpenChange(false)
-  };
+    onFechar(); // Fecha o modal após cadastrar
+  }
 
   const handleClose = () => {
     setTitle("")
