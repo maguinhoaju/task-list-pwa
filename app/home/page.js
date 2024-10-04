@@ -8,7 +8,7 @@ import {
   addTaskToFirestore,
   getTasksFromFirestore,
 } from "../../public/utils/firebase";
-import { logEvent } from 'firebase/analytics';
+import { logEvent, analytics } from 'firebase/analytics';
 import { addTask, getTasks } from "../../public/utils/indexedDb";
 
 
@@ -124,7 +124,7 @@ export default function Home() {
       }
       await addTask(newTask);
       loadTasks();
-      logEvent(analytics, 'add_task_event', {
+      logEvent(analytics, 'page_view', {
         page_title: 'home',
         user_id: user.id,
       });

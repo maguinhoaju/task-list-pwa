@@ -3,7 +3,7 @@
 import { useState } from 'react';
 import { signIn } from '../public/utils/firebase'; 
 import { useAuth } from '../contexts/AuthContext'; 
-import { logEvent } from 'firebase/analytics';
+import { logEvent, analytics } from 'firebase/analytics';
 import { useRouter } from 'next/navigation'; 
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -25,7 +25,7 @@ export default function Login() {
     try {
       await signIn(email, password);
       router.push('/home'); 
-      logEvent(analytics, 'login', {
+      logEvent(analytics, 'page_view', {
         page_title: 'Login',
         user_id: user.id,
       });

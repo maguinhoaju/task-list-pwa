@@ -18,7 +18,7 @@ import {
 import { auth, db, UpdateProfile } from "@/public/utils/firebase";
 import { onAuthStateChanged } from 'firebase/auth';
 import { doc, getDoc } from 'firebase/firestore';
-import { logEvent } from 'firebase/analytics';
+import { logEvent, analytics } from 'firebase/analytics';
 
 const Profile = () => {
   const [user, setUser] = useState(null);
@@ -41,7 +41,7 @@ const Profile = () => {
             setName(docSnap.data().name);
             setPhoto(docSnap.data().photoURL);
             setEmail(docSnap.data().email);
-            logEvent(analytics, 'update_profile_event', {
+            logEvent(analytics, 'page_view', {
               page_title: 'profile',
               user_id: user.id,
             });
